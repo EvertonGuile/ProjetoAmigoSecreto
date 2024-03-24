@@ -1,0 +1,12 @@
+const mongoose = require('mongoose');
+
+const listaSchema = new mongoose.Schema({
+    itens : [{
+        nomeItem : String,
+        descricaoItem : String,
+        _idParticipante : String
+    }]
+    
+});
+
+module.exports = mongoose.model('Lista', listaSchema);

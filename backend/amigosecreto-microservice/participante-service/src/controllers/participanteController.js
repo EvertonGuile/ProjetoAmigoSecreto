@@ -3,12 +3,12 @@ const ParticipanteRepository = require('../repositories/participanteRepository')
 module.exports = {
     async create (request, response) {
         try {
-            let { _id } = await ParticipanteRepository.create(request.body);
+            let { _id } =  await ParticipanteRepository.create(request.body);
             return response.json({
                 "mensagem" : "Participante criado com sucesso!",
                 "status" : 200,
-                "idParticipante" : _id
-            });
+                "idParticipante" :_id            
+            }); 
         }
         catch (err) {
             return response.json({

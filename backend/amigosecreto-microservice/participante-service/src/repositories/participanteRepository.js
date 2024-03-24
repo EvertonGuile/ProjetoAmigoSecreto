@@ -10,6 +10,7 @@ module.exports = {
                 email,
                 senha
             });
+            console.log("PARTICIPANTE CRIADOOOOOOO")
             return retornParticipante;
         }
         catch (err) {

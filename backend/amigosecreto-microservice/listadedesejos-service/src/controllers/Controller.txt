@@ -1,0 +1,158 @@
+const listadedesejoModel = require('../models/listadedesejoModel');
+const listadedesejoRepository = require('../repositories/listadedesejoRepository');
+
+
+module.exports = {
+    // FUNCIONA
+    // Caminho para método de Criar uma nova lista
+    async create(request, response) {
+        try {
+            const { itens } = request.body;
+            const novaLista = new listadedesejoModel({ itens });
+            const listaSalva = await novaLista.save();
+            
+            return response.json({
+                mensagem: "Lista criada com sucesso!",
+                status: 200,
+                lista: listaSalva
+            });
+        } catch (error) {
+            console.error("Erro ao criar a lista de desejos:", error);
+            return response.status(500).json({
+                mensagem: "Erro ao criar a lista de desejos",
+                status: 500,
+                error: error.message
+            });
+        }
+    },
+
+    // FUNCIONA
+    async edit (request, response){
+        try {
+            let Lista =  await listadedesejoRepository.edit(request.body);
+           return response.json({
+                "mensagem" : "Lista editada com sucesso!",
+                "status" : 200,
+                "Lista" :Lista            
+            }); 
+        }       
+        catch (err) {
+            return response.json({
+                "mensagem" : "Erro " + err,
+                "status" : 500,
+                "idGrupo" : null
+            });
+        }
+    },
+
+
+    // FUNCIONA
+    // Caminho para método de Deletar uma Lista por Id
+    async delete (request, response){
+        let { id }  = request.params;
+        const listaDesejos = await listadedesejoRepository.delete(id);
+        return response.json({
+            "mensagem" : "Lista removida com sucesso!",
+            "status" : 200
+        }); 
+    },
+
+    // FUNCIONA
+    // Caminho para método de Recuperar uma Lista por Id
+    async getById (request, response){
+        let { id }  = request.params;
+        let listaDesejos =  await listadedesejoRepository.getById(id);
+        
+        if (listaDesejos === null) {
+            response.status(404);           
+            return  response.json({
+                "mensagem" : "Lista não encontrada!",
+                "status" : 404,
+                "Lista" : listaDesejos            
+            });         
+        }
+        return response.json({
+            "mensagem" : "Lista encontrada com sucesso!",
+            "status" : 200,
+            "Lista" : listaDesejos            
+        }); 
+
+    },
+
+    //
+    // Caminho para método de Adicionar Item na Lista de Desejos
+    async addItemNaListaDeDesejos (request, response){      
+        try {        
+            await listadedesejoRepository.addItemNaListaDeDesejos(request.body);         
+            return response.json({
+                "mensagem" : "Item adicionado na lista com sucesso!",
+                "status" : 200           
+            }); 
+        }       
+        catch (err) {
+            return response.json({
+                "mensagem" : "Erro " + err,
+                "status" : 500,
+                "Lista" : null
+            });
+        }
+    },
+
+    // Caminho para método de Deletar Item da Lista
+    async dellItemDaListaDeDesejos (request, response){      
+        try {        
+            await listadedesejoRepository.dellItemDaListaDeDesejos(request.body);         
+            return response.json({
+                "mensagem" : "Item removido da lista com sucesso!",
+                "status" : 200           
+            }); 
+        }       
+        catch (err) {
+            return response.json({
+                "mensagem" : "Erro " + err,
+                "status" : 500,
+                "Lista" : null
+            });
+        }
+    },
+
+    // 
+    // Caminho para método de Recuperar Lista por Participante
+    async getListaDeDesejosByParticipante (request, response){
+        let { idParticipante }  = request.params;
+        console.log(idParticipante);
+        let listaDesejos =  await listadedesejoRepository.getListaDeDesejosByParticipante(idParticipante);
+        
+        if (listaDesejos === null) {
+            response.status(404);           
+            return  response.json({
+                "mensagem" : "Lista não encontrado!",
+                "status" : 404,
+                "Lista" : listaDesejos           
+            });         
+        }
+        return response.json({
+            "mensagem" : "Lista encontrada com sucesso!",
+            "status" : 200,
+            "Lista" : listaDesejos            
+        }); 
+
+    },
+    // Método que retorna todos os grupos do banco de dados
+    async getAll(request, response) {
+        try {
+            const listas = await listadedesejoRepository.getAll();
+            return response.json({
+                "mensagem": "Grupos encontrados com sucesso!",
+                "status": 200,
+                "listas": listas
+            });
+        } catch (err) {
+            return response.json({
+                "mensagem": "Erro " + err,
+                "status": 500,
+                "listas": null
+            });
+        }
+    }
+}

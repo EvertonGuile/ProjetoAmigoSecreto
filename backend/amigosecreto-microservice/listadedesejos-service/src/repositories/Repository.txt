@@ -1,0 +1,134 @@
+const ListaDesejos = require('../models/listadedesejoModel');
+
+module.exports = {
+    // FUNCIONA
+    async create (listaDesejos){
+        try{
+            const { itens } = listaDesejos;
+            const itensCriados = await Promise.all(itens.map(async (item) => {
+                const { nomeItem, descricaoItem, _idParticipante } = item;
+                return await ListaDesejos.create({
+                    nomeItem,
+                    descricaoItem,
+                    _idParticipante
+                });
+            }));
+         return itensCriados;
+        }
+        catch (err) {
+            console.log("Erro " + err);
+        }
+        return null;
+    },
+
+    // FUNCIONA
+    async edit (listaDesejos){
+        console.log("Entrou no listadedeseRepository método edit")
+        try{
+            let { _id, nomeItem, descricaoItem }  = listaDesejos;
+            console.log(listaDesejos);
+            const retornLista = await ListaDesejos.findByIdAndUpdate(
+                { _id }, {$set : { nomeItem, descricaoItem}}
+         );
+         return retornLista;
+        }
+        catch (err) {
+            console.log("Erro " + err);
+        }
+        return null;
+    },
+
+    // FUNCIONA
+    async getById (_id){
+        try{
+            
+            const retornLista = await ListaDesejos.find({ _id }); 
+            return retornLista;
+        }
+        catch (err) {
+            console.log("Erro " + err);
+        }
+        return null;
+    },
+
+    // FUNCIONA
+    async delete (_id){
+        try{
+            
+            const retornLista = await ListaDesejos.deleteOne({ _id : _id}); 
+            return retornLista;
+        }
+        catch (err) {
+            console.log("Erro " + err);
+        }
+        return null;
+    },
+
+    // 
+    async addItemNaListaDeDesejos (listaDesejos){
+        try{           
+            let { _id , nomeItem, descricaoItem } = listaDesejos; 
+            const retornLista = await ListaDesejos.updateOne({ _id }, { $push : { nomeItem, descricaoItem }});
+             return retornLista;
+        }
+        catch (err) {
+            console.log("Erro " + err);
+        }
+        return null;
+    },
+
+    // 
+    async getListaDeDesejosByParticipante (idParticipante){
+        try{            
+            const retornLista = await ListaDesejos.find({ itens: { $elemMatch: { "_idParticipante": idParticipante } } }); 
+            return retornLista;
+        }
+        catch (err) {
+            console.log("Erro " + err);
+        }
+        return null;
+    },
+    //async dellItemDaListaDeDesejos (_id, _idParticipante){
+    //    try{
+    //        
+    //        const retornLista = await ListaDesejos.updateOne({ _id }, { $pull : { itens : { //_idParticipante }}});
+    //        return retornLista;
+    //    }
+    //    catch (err) {
+    //        console.log("Erro " + err);
+    //    }
+    //    return null;
+    //},
+
+    // Retorna todos os Grupos
+    async getAll() {
+        try {
+            const Lista = await ListaDesejos.find();
+            return Lista;
+        } catch (err) {
+            console.log("Erro " + err);
+            return null;
+        }
+    },
+    // Retorna grupos de acordo com Id do Participante
+    async getListaDeDesejosByParticipante(participanteId) {
+        try {
+            const Lista = await ListaDesejos.find({ "itens._participanteId": participanteId });
+
+            const listaDetalhada = [];
+
+            console.log(listaDetalhada);
+
+            for (const lista of Lista) {
+                const detalhesLista = await ListaDesejos.findById(grupo._id);
+                console.log("Detalhes do grupo encontrado:", detalhesLista);
+                listaDetalhada.push(detalhesLista);
+            }
+            console.log(listaDetalhada);
+            return listaDetalhada;
+        } catch (err) {
+            console.log("Erro " + err);
+            return null;
+        }
+    }    
+}

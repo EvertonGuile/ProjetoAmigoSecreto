@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 
 const routes = require('./routes/routes');
 
+require('dotenv').config();
+
 const app = express();
 
 app.use(express.json());
@@ -24,9 +26,11 @@ app.post('/participante', (request, response) => {
 
 app.use(routes);
 
-mongoose.connect('mongodb+srv://evertinhuplayer:O93fSpTIvhf92qxL@firstcluster.vwo5uub.mongodb.net/?retryWrites=true&w=majority',{
+mongoose.connect(process.env.URL,{
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
 
-app.listen(3333);
+const port = 5050;
+
+app.listen(port, () => console.log(`API online na porta ${port}!`));

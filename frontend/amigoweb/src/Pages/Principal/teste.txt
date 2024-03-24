@@ -1,0 +1,48 @@
+import React, { useState, useEffect } from "react";
+import api from "../../services/api";
+
+export default function Principal() {
+  const [grupos, setGrupos] = useState([]);
+  const pIdParticipante = localStorage.getItem('idParticipante') || '';
+
+  useEffect(() => {
+    loadingGrupos(pIdParticipante);
+  }, [pIdParticipante]);
+
+  function loadingGrupos(idParticipante) {
+    if (!idParticipante) {
+      console.error('ID do participante não está definido.');
+      return;
+    }
+
+    api.get(`/grupo/byParticipante/${idParticipante}`)
+      .then(response => {
+        console.log(response.data);
+        setGrupos(response.data.Grupos); // Ajuste para acessar a propriedade "Grupos" da resposta
+      })
+      .catch(error => {
+        console.error('Erro ao carregar grupos:', error);
+      });
+  }
+
+  return (
+    <div>
+      <h1>Grupos Amigo Secreto</h1>
+      <ul>
+        {grupos.length > 0 ? (
+          grupos.map((grupo) => (
+            <li key={grupo._id}>
+              <h2>{grupo.nome}</h2>
+              <p>Responsável: {grupo.responsavel}</p>
+              <p>Data do Sorteio: {grupo.dataSorteio}</p>
+              <p>Valor Mínimo: {grupo.valorMinimo}</p>
+              <p>Valor Máximo: {grupo.valorMaximo}</p>
+            </li>
+          ))
+        ) : (
+          <li>NENHUM Grupo Encontrado!</li>
+        )}
+      </ul>
+    </div>
+  );
+}
